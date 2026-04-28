@@ -1,11 +1,6 @@
-
-// LISTA DE COISAS QUE FALTAM NO CÓDIGO
-
-    // Colocar limite de valor que pode ser adicionado no próprio campo. (Talvez uns 3)
-    // Fazer um somatório no tempo adicionado (Exp abaixo)
-    // > Se colocar 1.15, tempo = 30min, volta .15 no troco. Se colocar + 2 por exemplo: Tempo "30min" + 60min = 90 MINUTOS, volta .25 no troco.
-
 // CRIAÇÃO DA CLASSE PRINCIPAL
+
+let tempoSomado = 0;
 
 class Parquimetro {
     constructor(valorColocado) {
@@ -19,13 +14,13 @@ class Parquimetro {
 
     calcularTempo() {
 
-        if(this.valorColocado >= 1 && this.valorColocado < 1.75) {this.tempoConvertido = "30 minutos"}
+        if(this.valorColocado >= 1 && this.valorColocado < 1.75) {this.tempoConvertido = 30}
 
-        else if(this.valorColocado >= 1.75 && this.valorColocado < 3) {this.tempoConvertido = "60 minutos"}
+        else if(this.valorColocado >= 1.75 && this.valorColocado < 3) {this.tempoConvertido = 60}
 
-        else if(this.valorColocado >= 3) {this.tempoConvertido = "120 minutos"}
+        else if(this.valorColocado >= 3) {this.tempoConvertido = 120}
 
-        else(alert ("Ativação do ELSE no [calcularTempo()]")) // Depois dar uma olhada melhor nessa linha do else.
+        else(document.getElementById("aviso").textContent = "Saldo insuficiente para conversão");
 
     }
 
@@ -34,39 +29,54 @@ class Parquimetro {
 
     calcularTroco() {
 
-        if(this.tempoConvertido === "30 minutos") {this.troco = this.valorColocado - 1}
+        if(this.tempoConvertido === 30) {this.troco = this.valorColocado - 1}
 
-        else if(this.tempoConvertido === "60 minutos") {this.troco = this.valorColocado - 1.75}
+        else if(this.tempoConvertido === 60) {this.troco = this.valorColocado - 1.75}
 
-        else if(this.tempoConvertido === "120 minutos") {this.troco = this.valorColocado - 3}
+        else if(this.tempoConvertido === 120) {this.troco = this.valorColocado - 3}
 
-        else(alert ("Ativação do ELSE no [calcularTroco()]")) // Outro ELSE, depois dar uma olhada, e tenta ativá-lo nos testes.
+        else { this.troco = null }
+
+        // Para evitar de ultrapassar o limite permitido.
+        
+        tempoSomado += parseFloat(this.tempoConvertido);
+
+        if (tempoSomado > 120) {
+
+            tempoSomado -= this.tempoConvertido
+            this.troco = this.valorColocado
+            document.getElementById("aviso").textContent = "Com este valor, excede o tempo permitido por pessoa."
+
+            return
+        }
 
     }
 
-    // RESULTADO COM IF PARA EVITAR ERROS.
+    // APENAS EXIBIR RESULTADO
 
     exibirResultado() {
 
-        //Depois criar os IF e ELSES para esta seção.
-
-        document.getElementById("resultado").textContent = `Tempo: ${this.tempoConvertido} | Troco: R$ ${this.troco.toFixed(2)}`;
-        // Depois dar uma olhada nas CLASSES do CSS. (Erro e Sucesso). Exibidos nessa linha aqui
+        document.getElementById("resultado").textContent = `Tempo: ${tempoSomado} minutos | Dinheiro retornado: R$ ${this.troco.toFixed(2)}`;
 
     }
 }
 
-// FUNÇÃO PRINCIPAL PARA FAZERT TUDO FUNCIONAR
+// FUNÇÃO PRINCIPAL PARA FAZER TUDO FUNCIONAR
 
 function calculoPrincipal() {
 
     const valor = parseFloat(document.getElementById("valorGasto").value)
 
-    if (isNaN(valor) || valor < 0) {
+    if (isNaN(valor) || valor < 1 || valor > 5) {
 
-        alert("Digite um valor válido | ATIVAÇÃO IF EM FUNCTION [calculoPrincipal()]")
-        // document.getElementById("resultado").textContent = "Digite um valor válido" || DEPOIS MODIFICAR ESTE IF, FAVOR NÃO ESQUECER!!!
+        document.getElementById("aviso").textContent = "Insira um valor válido. (Valores entre R$ 1,00 e R$ 5,00)";
         return
+    }
+
+    if (valor >= 1 && valor <= 5) {
+
+        document.getElementById("aviso").textContent = ""
+
     }
 
     const parquimetroCalculado = new Parquimetro(valor)
